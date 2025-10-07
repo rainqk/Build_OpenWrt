@@ -34,8 +34,6 @@ jobs:
           git clone https://github.com/${{ env.LEDE_REPO }}.git \
             ${{ env.WORK_DIR }} \
             -b ${{ env.LEDE_BRANCH }} --depth 1 --single-branch
-            echo "==== 磁盘使用 ===="
-            df -h
 
       - name: 获取LEDE源码最新提交
         id: get_lede_commit
@@ -59,6 +57,8 @@ jobs:
         run: |
           cp configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
           cp configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
+          echo "===== LEDE 编译后完整目录结构 ====="
+          tree -L 3 ${{ env.WORK_DIR }}
 
       - name: 更新软件源
         run: |
