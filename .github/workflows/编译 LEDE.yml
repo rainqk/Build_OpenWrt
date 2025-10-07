@@ -16,7 +16,6 @@ jobs:
       FEEDS_FILE: feeds.conf.default
       WORK_DIR: /mnt/lede
       FIRMWARE_PATH: /mnt/lede/bin/targets/**/*
-      TIMES: $(date +%Y%m%d_%H%M%S)
 
     steps:
       - name: 检查仓库
@@ -35,11 +34,10 @@ jobs:
             ${{ env.WORK_DIR }} \
             -b ${{ env.LEDE_BRANCH }} --depth 1 --single-branch
 
-      - name: 获取LEDE源码最新提交
-        id: get_lede_commit
+      - name: 设置时间戳变量
         run: |
-          cd ${{ env.WORK_DIR }}
-          echo "commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "TIMES=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
 
       - name: 安装依赖
         run: |
@@ -53,7 +51,7 @@ jobs:
             swig texinfo uglifyjs upx-ucl unzip wget xmlto xxd zlib1g-dev tree
           sudo apt clean && sudo rm -rf /var/lib/apt/lists/*
 
-      - name: 复制配置
+      - name: 复制配置文件
         run: |
           cp configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
           cp configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
