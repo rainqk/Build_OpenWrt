@@ -58,10 +58,11 @@ jobs:
           cp configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
           cp configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
           echo "===== 已复制的 .config 内容（前20行）====="
-          cat ${{ env.WORK_DIR }}/.config | head -20
+          cat ${{ env.WORK_DIR }}/.config | head -30
+          echo "===== 已复制的 feeds.conf.default 内容 ====="
           cat ${{ env.WORK_DIR }}/feeds.conf.default
-          echo "===== LEDE 编译后完整目录结构 ====="
-          tree -L 3 ${{ env.WORK_DIR }}
+          # echo "===== LEDE 编译后完整目录结构 ====="
+          # tree -L 3 ${{ env.WORK_DIR }}
 
       - name: 更新软件源
         run: |
