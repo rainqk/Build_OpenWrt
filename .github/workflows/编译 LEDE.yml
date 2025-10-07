@@ -1,0 +1,93 @@
+name: 编译 LEDE
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 18 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    name: 编译 LEDE 固件
+    env:
+      LEDE_REPO: coolsnowwolf/lede
+      LEDE_BRANCH: master
+      CONFIG_FILE: all.config
+      FEEDS_FILE: feeds.conf.default
+      WORK_DIR: /mnt/lede
+      FIRMWARE_PATH: /mnt/lede/bin/targets/*.*
+
+    steps:
+      - name: 检查当前仓库
+        uses: actions/checkout@v4
+
+      - name: 查看磁盘空间、添加权限
+        run: |
+          sudo chmod 777 /mnt
+          echo "==== 清理后磁盘使用 ===="
+          df -h
+
+      - name: 拉取LEDE源码
+        run: |
+          rm -rf ${{ env.WORK_DIR }}
+          git clone https://github.com/${{ env.LEDE_REPO }}.git \
+            ${{ env.WORK_DIR }} \
+            -b ${{ env.LEDE_BRANCH }} --depth 1 --single-branch
+            echo "==== 磁盘使用 ===="
+            df -h
+
+      - name: 获取 LEDE 源码最新提交
+        id: get_lede_commit
+        run: |
+          cd ${{ env.WORK_DIR }}
+          echo "commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: 安装编译依赖
+        run: |
+          sudo apt update -y
+          sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+            bzip2 ccache clang cmake cpio curl device-tree-compiler flex gawk gcc-multilib g++-multilib gettext \
+            genisoimage git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev \
+            libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev \
+            libreadline-dev libssl-dev libtool llvm libnsl-dev ninja-build p7zip p7zip-full patch pkgconf \
+            python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion \
+            swig texinfo uglifyjs upx-ucl unzip wget xmlto xxd zlib1g-dev
+          sudo apt clean && sudo rm -rf /var/lib/apt/lists/*
+          echo "==== 磁盘使用 ===="
+          df -h
+
+      - name: 复制自定义配置
+        run: |
+          cp configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
+          cp configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
+
+      - name: 更新软件源+下载库+编译固件
+        run: |
+          cd ${{ env.WORK_DIR }}
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          make download -j4
+          make defconfig
+          make -j3
+          echo "==== 磁盘使用 ===="
+          df -h
+
+      - name: 上传固件到Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: LEDE_x86_64_${{ github.run_id }}
+          name: LEDE x86_64_Release${{ github.run_id }}
+          body: |
+          files: ${{ env.FIRMWARE_PATH }}
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.LEDE_ALL }}
+
+      - name: 清理旧 Releases
+        uses: dev-drprasad/delete-older-releases@v0.3.3
+        with:
+          keep_latest: 3
+          delete_tags: true
+          tag_prefix: LEDE_x86_64_
+        env:
+          GITHUB_TOKEN: ${{ secrets.LEDE_ALL }}
