@@ -68,7 +68,7 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: 下载工具链、确认配置
+      - name: 下载工具链
         run: |
           cd ${{ env.WORK_DIR }}
           make download -j8
