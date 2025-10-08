@@ -1,0 +1,25 @@
+diff --git a/package/base-files/files/etc/openwrt_release b/package/base-files/files/etc/openwrt_release
+index 45a59f1..f3b1c8d 100644
+--- a/package/base-files/files/etc/openwrt_release
++++ b/package/base-files/files/etc/openwrt_release
+@@ -1,7 +1,7 @@
+ DISTRIB_ID='LEDE'
+ DISTRIB_RELEASE='%C'
+-DISTRIB_REVISION='%R'
+-DISTRIB_DESCRIPTION='LEDE %C %R'
++DISTRIB_REVISION='R$(date +%Y.%m.%d) by ganan3917'
++DISTRIB_DESCRIPTION='LEDE R$(date +%Y.%m.%d) by ganan3917'
+
+diff --git a/package/lean/autocore/files/generic/index.htm b/package/lean/autocore/files/generic/index.htm
+index 82b39a6..d3a1f5c 100644
+--- a/package/lean/autocore/files/generic/index.htm
++++ b/package/lean/autocore/files/generic/index.htm
+@@ -10,7 +10,7 @@
+ 	<tr><td width="33%"><%:Firmware Version%></td><td><%=luci.sys.exec("cat /etc/openwrt_release | grep DISTRIB_DESCRIPTION | awk -F \'\"\' \'{print $2}\'")%></td></tr>
+ 	<tr><td><%:Kernel Version%></td><td><%=luci.sys.exec("uname -r")%></td></tr>
+ 	<tr><td><%:Local Time%></td><td id="localtime"><%=os.date()%></td></tr>
+-	<tr><td><%:LuCI Version%></td><td><%=luci.version%></td></tr>
++	<tr><td><%:LuCI Version%></td><td>Custom Build</td></tr>
+ </table>
+ </script>
+ </body>
