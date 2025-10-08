@@ -14,8 +14,8 @@ jobs:
       LEDE_BRANCH: master
       CONFIG_FILE: all.config
       FEEDS_FILE: feeds.conf.default
-      WORK_DIR: /mnt/lede
-      FIRMWARE_PATH: /mnt/lede/bin/targets/**/*
+      WORK_DIR: /lede
+      FIRMWARE_PATH: /lede/bin/targets/**/*
 
     steps:
       - name: 检查仓库
