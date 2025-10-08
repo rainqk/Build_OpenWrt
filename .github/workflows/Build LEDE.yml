@@ -73,7 +73,6 @@ jobs:
       - name: 下载dl链
         run: |
           cd ${{ env.WORK_DIR }}
-          make clean
           make defconfig
           make download -j4
 
