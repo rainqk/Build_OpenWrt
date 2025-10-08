@@ -14,8 +14,8 @@ jobs:
       LEDE_BRANCH: master
       CONFIG_FILE: all.config
       FEEDS_FILE: feeds.conf.default
-      WORK_DIR: /lede
-      FIRMWARE_PATH: /lede/bin/targets/**/*
+      WORK_DIR: ${{ github.workspace }}/lede  # 修正工作目录
+      FIRMWARE_PATH: ${{ env.WORK_DIR }}/bin/targets/**/*.{img,bin,tar.gz}  # 精确匹配固件
 
     steps:
       - name: 检查仓库
@@ -29,7 +29,7 @@ jobs:
 
       - name: 设置时间
         run: |
-          echo "TIMES=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+          echo "TIMES=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
 
       - name: 安装依赖
         run: |
@@ -66,7 +66,7 @@ jobs:
       - name: 编译固件
         run: |
           cd ${{ env.WORK_DIR }}
-          make -j4
+          make -j$(nproc)
           
       - name: 清理ipk
         run: |
