@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: 检查仓库
         uses: actions/checkout@v4
-
+        
       - name: 查看磁盘空间、添加权限
         run: |
           sudo chmod 777 /mnt
@@ -47,7 +47,7 @@ jobs:
             libreadline-dev libssl-dev libtool llvm libnsl-dev ninja-build p7zip p7zip-full patch pkgconf \
             python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion \
             swig texinfo uglifyjs upx-ucl unzip wget xmlto xxd zlib1g-dev tree
-            
+
       - name: 复制feeds.conf.default
         run: |
           cp -f ./configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
@@ -68,6 +68,11 @@ jobs:
           # echo "===== LEDE 编译后完整目录结构 ====="
           # tree -L 3 ${{ env.WORK_DIR }}
           
+      - name: 应用主机型号修改补丁
+        run: |
+          cd ${{ env.WORK_DIR }}
+          git apply --ignore-whitespace ../patches/modify_system_info.patch
+        
       - name: 下载dl链
         run: |
           cd ${{ env.WORK_DIR }}
@@ -83,6 +88,7 @@ jobs:
         run: |
           cd ${{ env.WORK_DIR }}
           find ${{ env.WORK_DIR }} -name "*.ipk" -type f -delete
+          
       - name: 上传固件
         uses: softprops/action-gh-release@v2
         with:
@@ -94,7 +100,7 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.LEDE_ALL }}
-
+          
       - name: 清理旧固件
         uses: dev-drprasad/delete-older-releases@v0.3.3
         with:
