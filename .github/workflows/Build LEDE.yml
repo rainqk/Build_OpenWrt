@@ -54,10 +54,10 @@ jobs:
         run: |
           cp configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
           cp configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
-          echo "===== 已复制的 .config 内容（前50行）====="
-          cat ${{ env.WORK_DIR }}/.config | head -50
-          echo "===== 已复制的 feeds.conf.default 内容 ====="
-          cat ${{ env.WORK_DIR }}/feeds.conf.default
+          # echo "===== 已复制的 .config 内容（前50行）====="
+          # cat ${{ env.WORK_DIR }}/.config | head -50
+          # echo "===== 已复制的 feeds.conf.default 内容 ====="
+          # cat ${{ env.WORK_DIR }}/feeds.conf.default
           # echo "===== LEDE 编译后完整目录结构 ====="
           # tree -L 3 ${{ env.WORK_DIR }}
 
@@ -67,10 +67,9 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: 下载工具链
+      - name: 下载dl链
         run: |
           cd ${{ env.WORK_DIR }}
-          make defconfig
           make download -j4
 
       - name: 编译固件
@@ -95,7 +94,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.LEDE_ALL }}
 
-      - name: 清理固件
+      - name: 清理旧固件
         uses: dev-drprasad/delete-older-releases@v0.3.3
         with:
           keep_latest: 3
