@@ -68,7 +68,7 @@ jobs:
           # echo "===== LEDE 编译后完整目录结构 ====="
           # tree -L 3 ${{ env.WORK_DIR }}
           
-      - name: 应用主机型号修改补丁
+      - name: 应用补丁
         run: |
           cd ${{ env.WORK_DIR }}
           # 修改CPU显示格式
