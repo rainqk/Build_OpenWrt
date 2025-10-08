@@ -12,8 +12,8 @@ jobs:
     env:
       LEDE_REPO: coolsnowwolf/lede
       LEDE_BRANCH: master
-      CONFIG_FILE: all.config
-      FEEDS_FILE: feeds.conf.default
+      CONFIG_FILE: /configs/all.config
+      FEEDS_FILE: /configs/feeds.conf.default
       WORK_DIR: /mnt/lede
       FIRMWARE_PATH: /mnt/lede/bin/targets/**/*
 
@@ -50,22 +50,25 @@ jobs:
             swig texinfo uglifyjs upx-ucl unzip wget xmlto xxd zlib1g-dev tree
           sudo apt clean && sudo rm -rf /var/lib/apt/lists/*
 
-      - name: 复制配置文件
+      - name: 复制feeds.conf.default
         run: |
-          cp configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
-          cp configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
-          # echo "===== 已复制的 .config 内容（前50行）====="
-          # cat ${{ env.WORK_DIR }}/.config | head -50
-          # echo "===== 已复制的 feeds.conf.default 内容 ====="
-          # cat ${{ env.WORK_DIR }}/feeds.conf.default
-          # echo "===== LEDE 编译后完整目录结构 ====="
-          # tree -L 3 ${{ env.WORK_DIR }}
+          cp ${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
+          echo "===== 已复制的 feeds.conf.default 内容 ====="
+          cat ${{ env.WORK_DIR }}/feeds.conf.default
 
       - name: 更新软件源
         run: |
           cd ${{ env.WORK_DIR }}
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+          
+      - name: 复制config
+        run: |
+          cp ${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
+          echo "===== 已复制的 .config 内容（前50行）====="
+          cat ${{ env.WORK_DIR }}/.config | head -50
+          echo "===== LEDE 编译后完整目录结构 ====="
+          tree -L 3 ${{ env.WORK_DIR }}
 
       - name: 下载dl链
         run: |
