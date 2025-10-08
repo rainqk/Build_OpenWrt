@@ -63,11 +63,11 @@ jobs:
       - name: 复制config
         run: |
           cp -f ./configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
+          make defconfig
 
       - name: 下载dl链
         run: |
           cd ${{ env.WORK_DIR }}
-          # make defconfig
           make download -j4
 
       - name: 编译固件
