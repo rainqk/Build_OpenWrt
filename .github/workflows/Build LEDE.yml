@@ -1,4 +1,4 @@
-name: 编译 LEDE
+name: Build LEDE
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    name: 编译 LEDE 固件
+    name: Build LEDE
     env:
       LEDE_REPO: coolsnowwolf/lede
       LEDE_BRANCH: master
