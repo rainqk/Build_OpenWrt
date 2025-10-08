@@ -14,8 +14,8 @@ jobs:
       LEDE_BRANCH: master
       CONFIG_FILE: all.config
       FEEDS_FILE: feeds.conf.default
-      WORK_DIR: ${{ github.workspace }}/lede  # 修正工作目录
-      FIRMWARE_PATH: ${{ env.WORK_DIR }}/bin/targets/**/*.{img,bin,tar.gz}  # 精确匹配固件
+      WORK_DIR: ${{ github.workspace }}/lede
+      FIRMWARE_PATH: ${{ env.WORK_DIR }}/bin/targets/**/*.{img,bin,tar.gz}
 
     steps:
       - name: 检查仓库
