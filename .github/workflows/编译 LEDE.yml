@@ -34,10 +34,9 @@ jobs:
             ${{ env.WORK_DIR }} \
             -b ${{ env.LEDE_BRANCH }} --depth 1 --single-branch
 
-      - name: 设置时间戳变量
+      - name: 设置时间
         run: |
           echo "TIMES=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
 
       - name: 安装依赖
         run: |
@@ -55,6 +54,7 @@ jobs:
         run: |
           cp configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
           cp configs/${{ env.CONFIG_FILE }} ${{ env.WORK_DIR }}/.config
+          make defconfig
           echo "===== 已复制的 .config 内容（前20行）====="
           cat ${{ env.WORK_DIR }}/.config | head -30
           echo "===== 已复制的 feeds.conf.default 内容 ====="
@@ -71,13 +71,13 @@ jobs:
       - name: 下载工具链、确认配置
         run: |
           cd ${{ env.WORK_DIR }}
-          make download -j4
-          make defconfig
+          make download -j8
 
       - name: 编译固件
         run: |
           cd ${{ env.WORK_DIR }}
-          make -j3
+          make def config
+          make -j4
           
       - name: 清理ipk
         run: |
