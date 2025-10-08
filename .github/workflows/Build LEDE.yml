@@ -76,7 +76,7 @@ jobs:
       - name: 编译固件
         run: |
           cd ${{ env.WORK_DIR }}
-          make def config
+          make defconfig
           make -j4
           
       - name: 清理ipk
