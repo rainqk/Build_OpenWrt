@@ -72,6 +72,7 @@ jobs:
         run: |
           cd ${{ env.WORK_DIR }}
           git apply --ignore-whitespace ../patches/modify_system_info.patch
+          git apply --ignore-whitespace ../patches/modify_version_info.patch
         
       - name: 下载dl链
         run: |
