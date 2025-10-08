@@ -14,13 +14,16 @@ jobs:
       LEDE_BRANCH: master
       CONFIG_FILE: all.config
       FEEDS_FILE: feeds.conf.default
-      WORK_DIR: /home/lede
-      FIRMWARE_PATH: /home/lede/bin/targets/**/*.{img,bin,tar.gz}
+      # 核心修改：将工作目录从 /home/lede 改为 /mnt/lede
+      WORK_DIR: /mnt/lede
+      # 固件路径也会自动适配新的工作目录
+      FIRMWARE_PATH: /mnt/lede/bin/targets/**/*.{img,bin,tar.gz}
 
     steps:
       - name: 检查仓库
         uses: actions/checkout@v4
 
+      # 拉取源码时会自动克隆到 /mnt/lede
       - name: 拉取LEDE源码
         run: |
           git clone https://github.com/${{ env.LEDE_REPO }}.git \
@@ -43,10 +46,12 @@ jobs:
             swig texinfo uglifyjs upx-ucl unzip wget xmlto xxd zlib1g-dev tree
           sudo apt clean && sudo rm -rf /var/lib/apt/lists/*
 
+      # 复制配置文件到新的工作目录
       - name: 复制feeds.conf.default
         run: |
           cp -f ./configs/${{ env.FEEDS_FILE }} ${{ env.WORK_DIR }}/${{ env.FEEDS_FILE }}
 
+      # 后续步骤的编译操作会在 /mnt/lede 中执行
       - name: 更新软件源
         run: |
           cd ${{ env.WORK_DIR }}
