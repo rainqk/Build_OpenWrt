@@ -14,15 +14,18 @@ jobs:
       LEDE_BRANCH: master
       CONFIG_FILE: all.config
       FEEDS_FILE: feeds.conf.default
-      # 核心修改：将工作目录从 /home/lede 改为 /mnt/lede
       WORK_DIR: /mnt/lede
-      # 固件路径也会自动适配新的工作目录
       FIRMWARE_PATH: /mnt/lede/bin/targets/**/*.{img,bin,tar.gz}
 
     steps:
       - name: 检查仓库
         uses: actions/checkout@v4
 
+      - name: 创建工作目录并授权
+        run: |
+          sudo mkdir -p ${{ env.WORK_DIR }}
+          sudo chown -R $USER:$USER ${{ env.WORK_DIR }}
+          
       # 拉取源码时会自动克隆到 /mnt/lede
       - name: 拉取LEDE源码
         run: |
